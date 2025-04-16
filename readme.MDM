@@ -74,3 +74,84 @@ public class Main {
         }
     }
 }
+
+
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/testdb", "root", "password");
+            Statement statement = connection.createStatement();
+
+            while (true) {
+                System.out.println("Enter choice :");
+                System.out.println("1. Insert Student record ");
+                System.out.println("2. Display records ");
+                System.out.println("3. Update record ");
+                System.out.println("4. Delete record ");
+                System.out.println("5. Exit");
+
+                Scanner sc = new Scanner(System.in);
+                int choice = sc.nextInt();
+
+                switch (choice) {
+                    case 1: {
+                        System.out.print("Name :");
+                        sc.nextLine();
+                        String name = sc.nextLine();
+                        System.out.print("Roll Number :");
+                        int roll = sc.nextInt();
+                        System.out.print("City :");
+                        sc.nextLine();
+                        String city = sc.nextLine();
+
+                        String query = "INSERT INTO student (name, roll, city) VALUES ('" + name + "', " + roll + ", '" + city + "')";
+                        statement.executeUpdate(query);
+                        System.out.println("Student Added");
+                    }
+                    break;
+                    case 2:
+                        ResultSet rs = statement.executeQuery("SELECT * FROM student");
+                        while (rs.next()) {
+                            System.out.println("Name: " + rs.getString("name") + ", Roll: " + rs.getInt("roll") + ", City: " + rs.getString("city"));
+                        }
+                        break;
+                    case 3: {
+                        System.out.println("Enter name to search record :");
+                        sc.nextLine();
+                        String name = sc.nextLine();
+                        System.out.println("Enter new name :");
+                        String newName = sc.nextLine();
+
+                        String query = "UPDATE student SET name = '" + newName + "' WHERE name = '" + name + "'";
+                        statement.executeUpdate(query);
+                        System.out.println("Record Updated");
+                    }
+                    break;
+                    case 4: {
+                        System.out.println("Enter name of student to delete :");
+                        sc.nextLine();
+                        String name = sc.nextLine();
+
+                        String query = "DELETE FROM student WHERE name = '" + name + "'";
+                        statement.executeUpdate(query);
+                        System.out.println("Record Deleted");
+                    }
+                    break;
+                    case 5:
+                        connection.close();
+                        System.out.println("Connection Closed");
+                        return;
+                    default:
+                        System.out.println("Invalid choice");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
